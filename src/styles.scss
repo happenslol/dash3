@@ -1,0 +1,41 @@
+.window {
+  background-color: #212121;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.login-input {
+  margin-left: 48px;
+
+  entry {
+    border-radius: 18px;
+
+    text {
+      padding: 0 8px;
+    }
+  }
+}
+
+.login-button {
+  border-radius: 50%;
+}
+
+.ctl-container {
+  margin-bottom: 32px;
+}
+
+button.loading image {
+  opacity: 0;
+}
+
+.ctl-button {
+  border-radius: 50%;
+  min-width: 32px;
+  min-height: 32px;
+
+  image {
+    padding: 4px;
+  }
+}
