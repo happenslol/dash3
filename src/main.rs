@@ -1,12 +1,10 @@
 use gtk4::{
-  cairo::{RectangleInt, Region},
-  gdk::Display,
-  glib,
-  prelude::*,
-  style_context_add_provider_for_display, Application, ApplicationWindow, CssProvider,
-  STYLE_PROVIDER_PRIORITY_APPLICATION,
+  gdk::Display, glib, prelude::*, style_context_add_provider_for_display, Application,
+  ApplicationWindow, Box, CssProvider, STYLE_PROVIDER_PRIORITY_APPLICATION,
 };
 use gtk4_layer_shell::{Edge, Layer, LayerShell};
+
+static CSS: &str = grass::include!("src/styles.scss");
 
 fn main() -> glib::ExitCode {
   let app = Application::builder()
@@ -15,7 +13,7 @@ fn main() -> glib::ExitCode {
 
   app.connect_startup(|_| {
     let provider = CssProvider::new();
-    provider.load_from_string(include_str!("styles.css"));
+    provider.load_from_string(CSS);
 
     style_context_add_provider_for_display(
       &Display::default().unwrap(),
@@ -29,33 +27,66 @@ fn main() -> glib::ExitCode {
 }
 
 fn build_ui(app: &Application) {
-  let bbox = gtk4::Box::builder()
-    .width_request(100)
-    .height_request(100)
-    .css_classes(["interactive"])
+  let login = gtk4::Box::builder()
+    .orientation(gtk4::Orientation::Vertical)
+    .halign(gtk4::Align::Center)
+    .spacing(10)
+    .build();
+
+  login.append(
+    &gtk4::Image::builder()
+      .halign(gtk4::Align::Center)
+      .width_request(120)
+      .height_request(120)
+      .css_classes(["avatar"])
+      .build(),
+  );
+
+  let input = gtk4::Box::builder()
+    .orientation(gtk4::Orientation::Horizontal)
+    .halign(gtk4::Align::Center)
+    .spacing(10)
+    .build();
+
+  input.append(&gtk4::PasswordEntry::builder().width_chars(32).build());
+
+  input.append(
+    &gtk4::Button::builder()
+      .css_classes(["login-button"])
+      .build(),
+  );
+
+  login.append(&input);
+
+  let ctl = gtk4::Box::builder()
+    .orientation(gtk4::Orientation::Horizontal)
+    .halign(gtk4::Align::Center)
+    .spacing(10)
+    .build();
+
+  ctl.append(&gtk4::Button::builder().css_classes(["ctl-button"]).build());
+  ctl.append(&gtk4::Button::builder().css_classes(["ctl-button"]).build());
+  ctl.append(&gtk4::Button::builder().css_classes(["ctl-button"]).build());
+
+  let root = gtk4::CenterBox::builder()
+    .orientation(gtk4::Orientation::Vertical)
+    .halign(gtk4::Align::Center)
+    .center_widget(&login)
+    .end_widget(&ctl)
     .build();
 
   let window = ApplicationWindow::builder()
     .application(app)
-    .default_width(400)
-    .default_height(200)
-    .child(&bbox)
+    .default_width(600)
+    .default_height(600)
+    .css_classes(["window"])
+    .child(&root)
     .build();
 
-  window.init_layer_shell();
-  window.set_layer(Layer::Overlay);
-  window.set_anchor(Edge::Top, true);
-  window.set_anchor(Edge::Right, true);
-  window.set_anchor(Edge::Bottom, true);
-  window.set_anchor(Edge::Left, true);
-  window.add_css_class("root");
-
-  window.connect_show(|window| {
-    let s = window.surface().unwrap();
-    s.set_input_region(&Region::create_rectangle(&RectangleInt::new(
-      0, 0, 100, 100,
-    )));
-  });
+  // window.init_layer_shell();
+  // window.set_layer(Layer::Overlay);
+  // window.set_anchor(Edge::Top, true);
+  // window.set_anchor(Edge::Right, true);
 
   window.present();
 }

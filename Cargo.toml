@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+grass = { version = "0.13.4", features = ["macro"] }
 gtk4 = { version = "0.9", features = ["v4_14"] }
 gtk4-layer-shell = "0.4"
